@@ -332,12 +332,12 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
                     return
                 }
                 val fileName: String? = call.argument("fileName")
-                synthesizeToFile(text!!, fileName!!)
+                val filePath = synthesizeToFile(text!!, fileName!!)
                 if (awaitSynthCompletion) {
                     synth = true
                     synthResult = result
                 } else {
-                    result.success(1)
+                    result.success(filePath)
                 }
             }
 
@@ -648,7 +648,7 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
         }
     }
 
-    private fun synthesizeToFile(text: String, fileName: String) {
+    private fun synthesizeToFile(text: String, fileName: String) : String{
         val fullPath: String
         val uuid: String = UUID.randomUUID().toString()
         bundle!!.putString(
@@ -677,8 +677,10 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
 
         if (result == TextToSpeech.SUCCESS) {
             Log.d(tag, "Successfully created file : $fullPath")
+            return fullPath
         } else {
             Log.d(tag, "Failed creating file : $fullPath")
+            return ""
         }
     }
 
