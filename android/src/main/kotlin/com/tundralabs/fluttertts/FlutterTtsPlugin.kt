@@ -328,7 +328,8 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
             "synthesizeToFile" -> {
                 val text: String? = call.argument("text")
                 if (synth) {
-                    result.success("Something went wrong. Please try again.")
+                    val failure: String = "TTS is currently synthesizing to file. Please wait for completion."
+                    result.success(failure)
                     return
                 }
                 val fileName: String? = call.argument("fileName")
