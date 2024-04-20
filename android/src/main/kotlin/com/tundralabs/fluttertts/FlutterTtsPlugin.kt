@@ -332,7 +332,7 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
                     return
                 }
                 val fileName: String? = call.argument("fileName")
-                val filePath = synthesizeToFile(text!!, fileName!!)
+                val filePath: String = synthesizeToFile(text!!, fileName!!)
                 if (awaitSynthCompletion) {
                     synth = true
                     synthResult = result
@@ -648,7 +648,7 @@ class FlutterTtsPlugin : MethodCallHandler, FlutterPlugin {
         }
     }
 
-    private fun synthesizeToFile(text: String, fileName: String) : String{
+    private fun synthesizeToFile(text: String, fileName: String) : String {
         val fullPath: String
         val uuid: String = UUID.randomUUID().toString()
         bundle!!.putString(
