@@ -7,7 +7,7 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
   final var iosAudioCategoryOptionsKey = "iosAudioCategoryOptionsKey"
   final var iosAudioModeKey = "iosAudioModeKey"
 
-  let synthesizer = AVSpeechSynthesizer()
+  var synthesizer = AVSpeechSynthesizer()
   var language: String = AVSpeechSynthesisVoice.currentLanguageCode()
   var rate: Float = AVSpeechUtteranceDefaultSpeechRate
   var languages = Set<String>()
