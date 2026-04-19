@@ -52,6 +52,7 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
       break
     case "awaitSynthCompletion":
       self.awaitSynthCompletion = call.arguments as! Bool
+      NSLog("flutter_tts: awaitSynthCompletion set to \(self.awaitSynthCompletion)")
       result(1)
       break
     case "synthesizeToFile":
@@ -168,6 +169,7 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
   }
 
   private func synthesizeToFile(text: String, fileName: String, isFullPath: Bool, result: @escaping FlutterResult) {
+    NSLog("flutter_tts: synthesizeToFile called, awaitSynthCompletion=\(self.awaitSynthCompletion)")
     var output: AVAudioFile?
     var failed = false
     let utterance = AVSpeechUtterance(string: text)
@@ -190,16 +192,18 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
         }
         print(pcmBuffer.format)
         if pcmBuffer.frameLength == 0 {
-            // finished
+            // Synthesis finished - call the result callback if awaiting completion
+            NSLog("flutter_tts: write callback - frameLength==0, awaitSynthCompletion=\(self.awaitSynthCompletion), synthResult=\(self.synthResult != nil)")
+            if self.awaitSynthCompletion && self.synthResult != nil {
+                NSLog("flutter_tts: calling synthResult(1)")
+                self.synthResult!(1)
+                self.synthResult = nil
+            }
         } else {
           // append buffer to file
-          let fileURL: URL
-          if isFullPath {
-              fileURL = URL(fileURLWithPath: fileName)
-          } else {
-              fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(fileName)
-          }
-          NSLog("Saving utterance to file: \(fileURL.absoluteString)")
+          // Always use the full path provided by Dart (isFullPath is passed from Dart)
+          let fileURL = URL(fileURLWithPath: fileName)
+          NSLog("flutter_tts: Saving utterance to file: \(fileURL.absoluteString)")
 
         if output == nil {
           do {
@@ -231,8 +235,10 @@ public class SwiftFlutterTtsPlugin: NSObject, FlutterPlugin, AVSpeechSynthesizer
         result(0)
     }
     if self.awaitSynthCompletion {
+      NSLog("flutter_tts: storing synthResult for later")
       self.synthResult = result
     } else {
+      NSLog("flutter_tts: awaitSynthCompletion is false, calling result(1) immediately")
       result(1)
     }
   }
