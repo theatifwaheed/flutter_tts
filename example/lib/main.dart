@@ -181,8 +181,7 @@ class MyAppState extends State<MyApp> {
       if (kDebugMode) debugPrint('Device/Browser Locale (BCP47): $myLocale');
       // TTS auto-selects the first matching raw voice with locale
       var rawVoice = rawVoices.firstWhere((v) => v?['locale'] == myLocale,
-          orElse: () => rawVoices
-              .firstWhere((v) => v?['locale']?.startsWith(myLocale) ?? false));
+          orElse: () => rawVoices.firstWhere((v) => v?['locale']?.startsWith(myLocale) ?? false));
       voice = rawVoice;
       if (kDebugMode) debugPrint('Computed Default Voice: $voice');
       if (voice != null) changedVoicesDropDownItem(voice);
@@ -221,16 +220,14 @@ class MyAppState extends State<MyApp> {
     flutterTts.stop();
   }
 
-  List<DropdownMenuItem<String?>> getEnginesDropDownMenuItems(
-      List<dynamic> engines) {
+  List<DropdownMenuItem<String?>> getEnginesDropDownMenuItems(List<dynamic> engines) {
     if (kDebugMode) debugPrint('getEnginesDropDownMenuItems...');
     if (engineItems.isEmpty) {
       rawEngines.clear();
       for (dynamic item in engines) {
         // if (kDebugMode) debugPrint('Engine: $item');
         rawEngines.add(item);
-        engineItems
-            .add(DropdownMenuItem<String?>(value: item, child: Text(item)));
+        engineItems.add(DropdownMenuItem<String?>(value: item, child: Text(item)));
       }
     }
     return engineItems;
@@ -254,8 +251,7 @@ class MyAppState extends State<MyApp> {
     await _getDefaultVoice();
   }
 
-  List<DropdownMenuItem<Map<String, String>?>> getVoicesDropDownMenuItems(
-      List<dynamic> voices) {
+  List<DropdownMenuItem<Map<String, String>?>> getVoicesDropDownMenuItems(List<dynamic> voices) {
     if (kDebugMode) {
       debugPrint('getVoicesDropDownMenuItems: voices count: ${voices.length}');
     }
@@ -271,30 +267,24 @@ class MyAppState extends State<MyApp> {
           value: v,
           child: Text("${v['name']} (${v['locale']})"),
         );
-        if (!voiceItems
-            .any((element) => mapEquals(element.value, menuItem.value))) {
+        if (!voiceItems.any((element) => mapEquals(element.value, menuItem.value))) {
           voiceItems.add(menuItem);
         }
       }
       voiceItems.sort((a, b) {
-        return a.child
-            .toString()
-            .toLowerCase()
-            .compareTo(b.child.toString().toLowerCase());
+        return a.child.toString().toLowerCase().compareTo(b.child.toString().toLowerCase());
       });
     }
     if (voiceItems.isNotEmpty && !_voiceDataReadyCompleter.isCompleted) {
       _voiceDataReadyCompleter.complete();
       if (kDebugMode) {
-        debugPrint(
-            '_voiceDataReadyCompleter completed with ${voiceItems.length} voiceItems');
+        debugPrint('_voiceDataReadyCompleter completed with ${voiceItems.length} voiceItems');
       }
     }
     return voiceItems;
   }
 
-  Future<void> changedVoicesDropDownItem(
-      Map<String, String>? selectedVoice) async {
+  Future<void> changedVoicesDropDownItem(Map<String, String>? selectedVoice) async {
     if (selectedVoice == null || selectedVoice.isEmpty) {
       return;
     }
@@ -305,25 +295,20 @@ class MyAppState extends State<MyApp> {
     setState(() {});
   }
 
-  List<DropdownMenuItem<String?>> getLanguagesDropDownMenuItems(
-      List<dynamic> languages) {
+  List<DropdownMenuItem<String?>> getLanguagesDropDownMenuItems(List<dynamic> languages) {
     if (kDebugMode) debugPrint('getLanguagesDropDownMenuItems...');
     if (languageItems.isEmpty) {
       rawLanguages.clear();
       for (dynamic item in languages) {
         // if (kDebugMode) debugPrint('Language: $item');
         rawLanguages.add(item); // remains unsorted
-        var menuItem =
-            DropdownMenuItem<String?>(value: item, child: Text(item));
+        var menuItem = DropdownMenuItem<String?>(value: item, child: Text(item));
         if (!languageItems.any((element) => element.value == menuItem.value)) {
           languageItems.add(menuItem);
         }
       }
       languageItems.sort((a, b) {
-        return a.child
-            .toString()
-            .toLowerCase()
-            .compareTo(b.child.toString().toLowerCase());
+        return a.child.toString().toLowerCase().compareTo(b.child.toString().toLowerCase());
       });
     }
     return languageItems;
@@ -346,8 +331,7 @@ class MyAppState extends State<MyApp> {
 
     // if the locale is changed, TTS auto-selects the first matching voice
     if (voiceItems.isNotEmpty) {
-      var voiceItem =
-          voiceItems.firstWhere((v) => v.value?['locale'] == selectedLanguage);
+      var voiceItem = voiceItems.firstWhere((v) => v.value?['locale'] == selectedLanguage);
       voice = voiceItem.value;
       if (voice != null) changedVoicesDropDownItem(voice);
     }
@@ -394,16 +378,15 @@ class MyAppState extends State<MyApp> {
             ],
           ),
         ),
-        floatingActionButton: (isAndroid || isIOS) &&
-                _newVoiceText != null &&
-                _newVoiceText!.trim().isNotEmpty
-            ? FloatingActionButton(
-                mini: true,
-                onPressed: () => saveToFile(_newVoiceText),
-                tooltip: 'Synthesize to File',
-                child: const Icon(Icons.save),
-              )
-            : null,
+        floatingActionButton:
+            (isAndroid || isIOS) && _newVoiceText != null && _newVoiceText!.trim().isNotEmpty
+                ? FloatingActionButton(
+                    mini: true,
+                    onPressed: () => saveToFile(_newVoiceText),
+                    tooltip: 'Synthesize to File',
+                    child: const Icon(Icons.save),
+                  )
+                : null,
       ),
     );
   }
@@ -418,8 +401,7 @@ class MyAppState extends State<MyApp> {
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasData) {
-                  return _enginesDropDownSection(
-                      snapshot.data as List<dynamic>);
+                  return _enginesDropDownSection(snapshot.data as List<dynamic>);
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
@@ -454,8 +436,8 @@ class MyAppState extends State<MyApp> {
                 return _voicesDropDownSection(snapshot.data as List<dynamic>);
               } else if (snapshot.hasError) {
                 if (!_voiceDataReadyCompleter.isCompleted) {
-                  _voiceDataReadyCompleter.completeError(
-                      snapshot.error ?? "Unknown error loading voices");
+                  _voiceDataReadyCompleter
+                      .completeError(snapshot.error ?? "Unknown error loading voices");
                 }
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -515,12 +497,9 @@ class MyAppState extends State<MyApp> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildButtonColumn(Colors.green, Colors.greenAccent, Icons.play_arrow,
-              'PLAY', _speak),
-          _buildButtonColumn(
-              Colors.red, Colors.redAccent, Icons.stop, 'STOP', _stop),
-          _buildButtonColumn(
-              Colors.blue, Colors.blueAccent, Icons.pause, 'PAUSE', _pause),
+          _buildButtonColumn(Colors.green, Colors.greenAccent, Icons.play_arrow, 'PLAY', _speak),
+          _buildButtonColumn(Colors.red, Colors.redAccent, Icons.stop, 'STOP', _stop),
+          _buildButtonColumn(Colors.blue, Colors.blueAccent, Icons.pause, 'PAUSE', _pause),
         ],
       ),
     );
@@ -573,24 +552,18 @@ class MyAppState extends State<MyApp> {
         ));
   }
 
-  Column _buildButtonColumn(Color color, Color splashColor, IconData icon,
-      String label, Function func) {
+  Column _buildButtonColumn(
+      Color color, Color splashColor, IconData icon, String label, Function func) {
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-              icon: Icon(icon),
-              color: color,
-              splashColor: splashColor,
-              onPressed: () => func()),
+              icon: Icon(icon), color: color, splashColor: splashColor, onPressed: () => func()),
           Container(
               margin: const EdgeInsets.only(top: 8.0),
               child: Text(label,
-                  style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w400,
-                      color: color)))
+                  style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w400, color: color)))
         ]);
   }
 

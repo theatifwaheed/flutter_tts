@@ -28,8 +28,7 @@ class FlutterTtsPlugin {
   bool get isContinued => ttsState == TtsState.continued;
 
   static void registerWith(Registrar registrar) {
-    channel =
-        MethodChannel(platformChannel, const StandardMethodCodec(), registrar);
+    channel = MethodChannel(platformChannel, const StandardMethodCodec(), registrar);
     final instance = FlutterTtsPlugin();
     channel.setMethodCallHandler(instance.handleMethodCall);
   }
@@ -106,8 +105,7 @@ class FlutterTtsPlugin {
       if (name == 'sentence') return;
       String text = utterance['text'] as String;
       int endIndex = charIndex;
-      while (endIndex < text.length &&
-          !RegExp(r'[\s,.!?]').hasMatch(text[endIndex])) {
+      while (endIndex < text.length && !RegExp(r'[\s,.!?]').hasMatch(text[endIndex])) {
         endIndex++;
       }
       String word = text.substring(charIndex, endIndex);
@@ -152,8 +150,7 @@ class FlutterTtsPlugin {
       case 'getVoices':
         return getVoices();
       case 'setVoice':
-        final tmpVoiceMap =
-            Map<String, String>.from(call.arguments as LinkedHashMap);
+        final tmpVoiceMap = Map<String, String>.from(call.arguments as LinkedHashMap);
         return _setVoice(tmpVoiceMap);
       case 'setSpeechRate':
         final rate = call.arguments as double;
@@ -249,9 +246,7 @@ class FlutterTtsPlugin {
 
   Future<List<Map<String, String>>> getVoices() async {
     var tmpVoices = synth.getVoices().toDart;
-    return tmpVoices
-        .map((voice) => {"name": voice.name, "locale": voice.lang})
-        .toList();
+    return tmpVoices.map((voice) => {"name": voice.name, "locale": voice.lang}).toList();
   }
 
   void _setLanguages() {
